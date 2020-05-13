@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server",
-    "dev": "env-cmd -f ./config2/dev.env nodemon server.js"
+    "dev": "env-cmd -f ./config/dev.env nodemon server.js"
   },
   "author": "",
   "license": "MIT",

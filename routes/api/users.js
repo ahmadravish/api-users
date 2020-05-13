@@ -10,8 +10,8 @@ const { check, validationResult } = require('express-validator'); //for check
 const User = require('../../models/User'); //get userschema or model
 
 //get jwt secret token from config
-const config = require('config');
-const jwtSecret = config.get('jwtSecret');
+//const config = require('config');
+const jwtSecret = process.env.jwtSecret;
 router.post(
   '/',
   [
@@ -41,13 +41,7 @@ router.post(
           .json({ errors: [{ msg: 'User already exist' }] }); //make errors same as check
       }
 
-      //get users gravatar
-      const avatar = gravatar.url(email, {
-        s: '200', //size
-        r: 'pg',
-        d: 'mm', //default
-      });
-      user = new User({ name, email, avatar, password }); //create instance to save in db use .save()
+      user = new User({ name, email, password }); //create instance to save in db use .save()
 
       //encrypt password
       //{note:whenever an func inbuilt or userdefine get a promise/value from func. use await}
@@ -56,19 +50,7 @@ router.post(
 
       await user.save(); //save evrything(email,pass,name..) in db
 
-      //check jwt valid or not
-      const payload = {
-        user: {
-          id: user.id,
-        },
-      };
-      jwt.sign(payload, jwtSecret, { expiresIn: 360000 }, (err, token) => {
-        //check token after every expire for security
-        if (err) throw err;
-        res.json({ token });
-      });
-
-      // res.send(req.body);
+      res.json(user);
     } catch (err) {
       console.log(err.message);
       res.status(500).send('server error');
